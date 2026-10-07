@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>二十四節気カレンダー</title>
+  <style>
+    :root {
+      --bg: #ffffff; --surface: #ffffff; --tint: #f6f5f2; --ink: #1c1c1e; --sub: #6b6a66; --faint: #a3a19b;
+      --line: rgba(28,28,30,0.12);
+      --spring: #b5677a; --summer: #2f7f78; --autumn: #b06a2c; --winter: #4a6a8f;
+      --accent: var(--autumn);
+      --mincho: 'Yu Mincho', 'YuMincho', 'Hiragino Mincho ProN', 'Noto Serif JP', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121315; --surface: #191a1d; --tint: #121315; --ink: #e8e6e1; --sub: #a09e98; --faint: #6c6b67;
+        --line: rgba(232,230,225,0.14);
+        --spring: #d99aa8; --summer: #6fbdb3; --autumn: #d9975c; --winter: #8fabc9;
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--sans); background: var(--bg); color: var(--ink);
+      min-height: 100vh; padding: 28px 20px 48px; -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 980px; margin: 0 auto; }
+    button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+    button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .spring { --c: var(--spring); } .summer { --c: var(--summer); }
+    .autumn { --c: var(--autumn); } .winter { --c: var(--winter); }
+
+    /* ヘッダー */
+    header {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+      padding-bottom: 16px; border-bottom: 1px solid var(--line);
+    }
+    .brand { font-size: 11px; font-weight: 600; letter-spacing: 0.28em; color: var(--sub); }
+    .brand b { font-family: var(--mincho); font-size: 15px; font-weight: 500; letter-spacing: 0.3em; color: var(--ink); margin-right: 14px; }
+    .today { font-size: 12px; letter-spacing: 0.08em; color: var(--sub); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    /* ヒーロー */
+    .hero {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 40px;
+      align-items: center; padding: 44px 0 40px; border-bottom: 1px solid var(--line);
+    }
+    .hero-main { display: flex; gap: 32px; align-items: flex-start; }
+    .name-col { display: flex; gap: 10px; flex-shrink: 0; }
+    .sekki-name {
+      writing-mode: vertical-rl; font-family: var(--mincho); font-weight: 500;
+      font-size: clamp(72px, 13vw, 128px); line-height: 1; letter-spacing: 0.04em;
+    }
+    .sekki-reading {
+      writing-mode: vertical-rl; font-size: 11px; letter-spacing: 0.5em; color: var(--sub); padding-top: 6px;
+    }
+    .hero-text { padding-top: 6px; min-width: 0; }
+    .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 11px; letter-spacing: 0.16em; color: var(--sub); }
+    .meta .season { color: var(--accent); font-weight: 700; }
+    .badge {
+      font-size: 10px; letter-spacing: 0.2em; padding: 3px 9px 3px 11px;
+      border: 1px solid var(--accent); color: var(--accent); border-radius: 999px;
+    }
+    .period { margin-top: 22px; font-size: 22px; font-weight: 300; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+    .period small { font-size: 12px; color: var(--sub); margin-left: 4px; }
+    .instant { margin-top: 6px; font-size: 12px; color: var(--sub); font-variant-numeric: tabular-nums; }
+    .rule { width: 36px; height: 2px; background: var(--accent); margin: 24px 0 20px; }
+    .desc { font-family: var(--mincho); font-size: 15px; line-height: 2.05; max-width: 26em; }
+    .status { margin-top: 22px; font-size: 13px; color: var(--sub); line-height: 1.8; }
+    .status b { color: var(--ink); font-weight: 600; }
+    .status .num { font-size: 26px; font-weight: 300; color: var(--accent); margin: 0 4px; font-variant-numeric: tabular-nums; }
+    .link-btn {
+      margin-top: 14px; font-size: 12px; letter-spacing: 0.1em; color: var(--sub);
+      border-bottom: 1px solid var(--line); padding-bottom: 3px;
+    }
+    .link-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+    /* 円環 */
+    .ring { width: 100%; max-width: 400px; justify-self: center; display: block; }
+    .seg { cursor: pointer; }
+    .seg .arc { fill: none; stroke: var(--c); stroke-width: 5; opacity: 0.38; transition: opacity .2s, stroke-width .2s; }
+    .seg .hit { fill: none; stroke: transparent; stroke-width: 64; }
+    .seg text { font-family: var(--mincho); font-size: 12px; fill: var(--faint); text-anchor: middle; dominant-baseline: central; transition: fill .2s; }
+    .seg:hover .arc { opacity: 0.75; }
+    .seg:hover text { fill: var(--ink); }
+    .seg.sel .arc { opacity: 1; stroke-width: 11; }
+    .seg.sel text { fill: var(--ink); font-weight: 700; }
+    .ring, .ring .seg { -webkit-tap-highlight-color: transparent; }
+    .ring:focus, .ring .seg:focus, .ring .seg:focus-visible { outline: none; }
+    .ring .seg:focus-visible .arc { opacity: 1; stroke-width: 9; }
+    .sun-halo { fill: var(--bg); }
+    .sun { fill: var(--ink); }
+    .sun-line { stroke: var(--line); stroke-width: 1; }
+    .ring-season { font-family: var(--mincho); font-size: 62px; fill: var(--accent); text-anchor: middle; dominant-baseline: central; }
+    .ring-cap { font-size: 9.5px; letter-spacing: 0.22em; fill: var(--sub); text-anchor: middle; }
+    .ring-val { font-size: 15px; font-weight: 300; fill: var(--ink); text-anchor: middle; font-variant-numeric: tabular-nums; }
+
+    /* セクション共通 */
+    section { padding: 36px 0 0; }
+    .sec-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .sec-title { font-size: 11px; font-weight: 600; letter-spacing: 0.28em; color: var(--sub); }
+    .sec-title b { font-family: var(--mincho); font-size: 15px; font-weight: 500; color: var(--ink); margin-right: 12px; letter-spacing: 0.2em; }
+    .nav { display: flex; align-items: center; gap: 4px; }
+    .nav-label { min-width: 104px; text-align: center; font-size: 15px; font-weight: 300; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+    .nav button {
+      width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
+      font-size: 13px; color: var(--sub); line-height: 1;
+    }
+    .nav button.wide { width: auto; padding: 0 14px; border-radius: 999px; font-size: 11px; letter-spacing: 0.12em; margin-left: 6px; }
+    .nav button:hover { border-color: var(--ink); color: var(--ink); }
+
+    /* 月間カレンダー */
+    .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); background: var(--surface); }
+    .dow { font-size: 10px; letter-spacing: 0.2em; color: var(--faint); text-align: center; padding: 9px 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .day {
+      position: relative; min-height: 74px; padding: 8px 9px; text-align: left; display: block; width: 100%;
+      border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      font-size: 14px; font-weight: 300; font-variant-numeric: tabular-nums;
+    }
+    .day.blank { background: var(--tint); }
+    .day.in::before { content: ''; position: absolute; inset: 0; background: var(--accent); opacity: 0.07; pointer-events: none; }
+    .day.sun .d { color: var(--spring); } .day.sat .d { color: var(--winter); }
+    .day.today .d {
+      display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+      margin: -4px 0 0 -5px; border-radius: 50%; background: var(--ink); color: var(--bg); font-weight: 500;
+    }
+    .day .term { display: block; margin-top: 8px; font-family: var(--mincho); font-size: 15px; font-weight: 600; color: var(--c); letter-spacing: 0.08em; }
+    .day .term::before { content: ''; display: block; width: 14px; height: 2px; background: var(--c); margin-bottom: 6px; }
+    button.day:hover { background: var(--tint); }
+
+    /* 年間一覧 */
+    .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); background: var(--surface); }
+    .item {
+      text-align: left; padding: 14px 14px 13px; position: relative;
+      border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    }
+    .item::before { content: ''; position: absolute; left: 14px; top: 0; width: 18px; height: 2px; background: var(--c); }
+    .item:hover { background: var(--tint); }
+    .item .n { font-family: var(--mincho); font-size: 19px; font-weight: 500; letter-spacing: 0.1em; }
+    .item .r { font-size: 9.5px; letter-spacing: 0.14em; color: var(--faint); margin-left: 6px; }
+    .item .dt { display: block; margin-top: 7px; font-size: 12px; color: var(--sub); font-variant-numeric: tabular-nums; }
+    .item.past .n, .item.past .dt { opacity: 0.45; }
+    .item.sel { background: var(--tint); box-shadow: inset 0 0 0 1px var(--c); }
+    .item.sel::before { width: 100%; left: 0; }
+    .item .now { position: absolute; right: 10px; top: 12px; font-size: 9px; letter-spacing: 0.16em; color: var(--c); border: 1px solid var(--c); border-radius: 999px; padding: 1px 6px 1px 8px; }
+
+    footer { margin-top: 34px; font-size: 11px; line-height: 1.9; color: var(--faint); }
+
+    @media (max-width: 760px) {
+      body { padding: 20px 16px 40px; }
+      .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 30px 0; }
+      .hero-main { gap: 20px; }
+      .brand b { display: block; margin-bottom: 4px; }
+      .day { min-height: 60px; padding: 6px 5px; font-size: 13px; }
+      .day .term { font-size: 12px; letter-spacing: 0; margin-top: 6px; }
+      .nav-label { min-width: 88px; font-size: 14px; }
+      .list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand"><b>二十四節気</b>24 SOLAR TERMS</div>
+    <div class="today" id="today"></div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-main">
+      <div class="name-col">
+        <div class="sekki-name" id="name"></div>
+        <div class="sekki-reading" id="reading"></div>
+      </div>
+      <div class="hero-text" id="heroText"></div>
+    </div>
+    <svg class="ring" id="ring" viewBox="0 0 400 400" role="group" aria-label="二十四節気の円環"></svg>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-title"><b>暦</b>CALENDAR</div>
+      <div class="nav">
+        <button id="calPrev" aria-label="前の月">&#8249;</button>
+        <div class="nav-label" id="calLabel"></div>
+        <button id="calNext" aria-label="次の月">&#8250;</button>
+        <button class="wide" id="calToday">今日</button>
+      </div>
+    </div>
+    <div class="cal" id="cal"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-title"><b>一年</b>YEAR</div>
+      <div class="nav">
+        <button id="yearPrev" aria-label="前の年">&#8249;</button>
+        <div class="nav-label" id="yearLabel"></div>
+        <button id="yearNext" aria-label="次の年">&#8250;</button>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <footer>
+    節気の日時は、太陽黄経が15°刻みの値になる瞬間を天文計算で求め、日本標準時で表示しています。<br>
+    時刻には15分程度の誤差があり、節気の瞬間が午前0時に近い年は、国立天文台の発表と日付が1日ずれることがあります。
+  </footer>
+</div>
+
+<script>
+// ===== 節気データ（小寒から年内の順） =====
+const SEKKI = [
+  { n: '小寒', r: 'しょうかん', s: 'winter', d: '寒の入り。寒さがいよいよ厳しくなりはじめる頃。この日から節分までを「寒の内」と呼ぶ。' },
+  { n: '大寒', r: 'だいかん',   s: 'winter', d: '一年でもっとも寒さが厳しい頃。寒気を生かして、味噌や酒などの寒仕込みが行われる。' },
+  { n: '立春', r: 'りっしゅん', s: 'spring', d: '暦の上で春がはじまる日。寒さの底を過ぎ、梅がほころび、日脚が少しずつ伸びていく。' },
+  { n: '雨水', r: 'うすい',     s: 'spring', d: '雪が雨に変わり、積もった雪や氷が解けて水になる頃。農耕の準備をはじめる目安とされた。' },
+  { n: '啓蟄', r: 'けいちつ',   s: 'spring', d: '土の中で冬ごもりをしていた虫たちが、陽気に誘われて地上へ出てくる頃。' },
+  { n: '春分', r: 'しゅんぶん', s: 'spring', d: '昼と夜の長さがほぼ等しくなる日。この日を境に昼が長くなっていく。春の彼岸の中日。' },
+  { n: '清明', r: 'せいめい',   s: 'spring', d: '万物が清らかで明るく、生き生きとする頃。花が咲き、空は澄み、若葉が萌えはじめる。' },
+  { n: '穀雨', r: 'こくう',     s: 'spring', d: '穀物を潤す春の雨が降る頃。種まきや田植えの準備に適した、春の最後の節気。' },
+  { n: '立夏', r: 'りっか',     s: 'summer', d: '暦の上で夏がはじまる日。新緑がまぶしく、風が心地よい、一年でも過ごしやすい季節。' },
+  { n: '小満', r: 'しょうまん', s: 'summer', d: '陽気がよくなり、草木が茂って天地に満ちはじめる頃。麦の穂が実り、ひと安心する時季。' },
+  { n: '芒種', r: 'ぼうしゅ',   s: 'summer', d: '稲や麦など、穂先に芒（のぎ）のある穀物の種をまく頃。梅雨入りが近づく。' },
+  { n: '夏至', r: 'げし',       s: 'summer', d: '一年で昼がもっとも長く、夜がもっとも短い日。梅雨のさなかで、これから暑さが本格化する。' },
+  { n: '小暑', r: 'しょうしょ', s: 'summer', d: '梅雨明けが近づき、暑さが本格的になっていく頃。この日から暑中に入る。' },
+  { n: '大暑', r: 'たいしょ',   s: 'summer', d: '一年でもっとも暑さが厳しい頃。夏の土用の時季にあたり、強い日差しが照りつける。' },
+  { n: '立秋', r: 'りっしゅう', s: 'autumn', d: '暦の上で秋がはじまる日。暑さは続くが、この日からの便りは残暑見舞いに変わる。' },
+  { n: '処暑', r: 'しょしょ',   s: 'autumn', d: '暑さがようやくおさまる頃。朝夕に涼しい風が立ち、虫の声が聞こえはじめる。' },
+  { n: '白露', r: 'はくろ',     s: 'autumn', d: '夜の空気が冷え、草花に朝露が白く宿りはじめる頃。秋の気配が深まっていく。' },
+  { n: '秋分', r: 'しゅうぶん', s: 'autumn', d: '昼と夜の長さがほぼ等しくなる日。この日を境に夜が長くなっていく。秋の彼岸の中日。' },
+  { n: '寒露', r: 'かんろ',     s: 'autumn', d: '草木に宿る露が冷たく感じられる頃。空気が澄み、月が美しく、秋が深まっていく。' },
+  { n: '霜降', r: 'そうこう',   s: 'autumn', d: '朝晩の冷え込みが増し、山里に霜が降りはじめる頃。紅葉が色づき、秋が終わりに向かう。' },
+  { n: '立冬', r: 'りっとう',   s: 'winter', d: '暦の上で冬がはじまる日。日差しが弱まり、木枯らしが吹き、冬の気配が立ちはじめる。' },
+  { n: '小雪', r: 'しょうせつ', s: 'winter', d: '寒さが進み、山にわずかな雪が降りはじめる頃。木々は葉を落とし、冬支度が進む。' },
+  { n: '大雪', r: 'たいせつ',   s: 'winter', d: '本格的に雪が降りはじめる頃。山は雪に覆われ、平地にも冬の寒さが訪れる。' },
+  { n: '冬至', r: 'とうじ',     s: 'winter', d: '一年で昼がもっとも短く、夜がもっとも長い日。この日を境に、日は再び長くなっていく。' },
+];
+const SEASON_JP = { spring: '春', summer: '夏', autumn: '秋', winter: '冬' };
+const DOW = ['日', '月', '火', '水', '木', '金', '土'];
+const DAY = 86400000, JST = 9 * 3600000;
+const lonOf = i => (285 + 15 * i) % 360;
+const ordinalOf = i => (i + 22) % 24 + 1;   // 立春を第一とする順番
+
+// ===== 天文計算 =====
+// 太陽の視黄経（度）。Meeus "Astronomical Algorithms" 25章の略算式
+function solarLongitude(ms) {
+  const deltaT = 69;  // TT - UT（秒）
+  const jde = ms / DAY + 2440587.5 + deltaT / 86400;
+  const T = (jde - 2451545) / 36525;
+  const rad = Math.PI / 180;
+  const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+  const M = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * rad;
+  const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M)
+          + (0.019993 - 0.000101 * T) * Math.sin(2 * M)
+          + 0.000289 * Math.sin(3 * M);
+  const omega = (125.04 - 1934.136 * T) * rad;
+  const lambda = L0 + C - 0.00569 - 0.00478 * Math.sin(omega);
+  return ((lambda % 360) + 360) % 360;
+}
+
+// 指定年の24節気の瞬間（UTCミリ秒）を小寒から順に返す
+const termCache = {};
+function termsOf(year) {
+  if (termCache[year]) return termCache[year];
+  const out = [];
+  for (let i = 0; i < 24; i++) {
+    let t = Date.UTC(year, 0, 5, 12) + i * 15.2184 * DAY;
+    for (let k = 0; k < 6; k++) {
+      const diff = ((lonOf(i) - solarLongitude(t) + 540) % 360) - 180;
+      t += diff / 0.985647 * DAY;
+    }
+    out.push(t);
+  }
+  return termCache[year] = out;
+}
+
+// ===== 日本標準時での日付処理 =====
+function jst(ms) {
+  const d = new Date(ms + JST);
+  return { y: d.getUTCFullYear(), m: d.getUTCMonth(), d: d.getUTCDate(), w: d.getUTCDay(), h: d.getUTCHours(), mi: d.getUTCMinutes() };
+}
+const dayNo = ms => Math.floor((ms + JST) / DAY);
+const pad = n => String(n).padStart(2, '0');
+const fmtDate = ms => { const j = jst(ms); return `${j.m + 1}月${j.d}日`; };
+const fmtDateW = ms => { const j = jst(ms); return `${j.m + 1}月${j.d}日（${DOW[j.w]}）`; };
+const fmtTime = ms => { const j = jst(ms); return `${j.h}:${pad(j.mi)}`; };
+
+function nextOf(t) { return t.i < 23 ? { y: t.y, i: t.i + 1 } : { y: t.y + 1, i: 0 }; }
+const timeOf = t => termsOf(t.y)[t.i];
+
+function currentTerm(now) {
+  const y = jst(now).y;
+  let cur = { y: y - 1, i: 23 };
+  termsOf(y).forEach((t, i) => { if (t <= now) cur = { y, i }; });
+  return cur;
+}
+
+// ===== 状態 =====
+const now = Date.now();
+const today = jst(now);
+const cur = currentTerm(now);
+let sel = { ...cur };
+let calY = today.y, calM = today.m;
+
+function select(y, i, jump) {
+  sel = { y, i };
+  if (jump) { const j = jst(timeOf(sel)); calY = j.y; calM = j.m; }
+  render();
+}
+const isSame = (a, b) => a.y === b.y && a.i === b.i;
+
+// ===== 描画 =====
+const $ = id => document.getElementById(id);
+
+function renderHero() {
+  const s = SEKKI[sel.i], start = timeOf(sel), next = nextOf(sel), end = timeOf(next);
+  document.documentElement.style.setProperty('--accent', `var(--${s.s})`);
+  $('name').textContent = s.n;
+  $('reading').textContent = s.r;
+
+  const isCur = isSame(sel, cur);
+  let status;
+  if (isCur) {
+    const left = dayNo(end) - dayNo(now);
+    status = `次の節気 <b>${SEKKI[next.i].n}</b> まで` + (left > 0 ? `あと<span class="num">${left}</span>日` : ' まもなく');
+  } else {
+    const diff = dayNo(start) - dayNo(now);
+    status = diff > 0 ? `この節気まで あと<span class="num">${diff}</span>日`
+           : diff === 0 ? 'この節気は 今日からはじまります'
+           : `この節気は<span class="num">${-diff}</span>日前にはじまりました`;
+  }
+  $('heroText').innerHTML = `
+    <div class="meta">
+      <span class="season">${SEASON_JP[s.s]}</span><span>第${ordinalOf(sel.i)}節気</span><span>太陽黄経 ${lonOf(sel.i)}°</span>
+      ${isCur ? '<span class="badge">いま</span>' : ''}
+    </div>
+    <div class="period">${fmtDate(start)} – ${fmtDate(end - DAY)}<small>${sel.y}年</small></div>
+    <div class="instant">${fmtDateW(start)} ${fmtTime(start)}頃に太陽黄経 ${lonOf(sel.i)}° を通過</div>
+    <div class="rule"></div>
+    <p class="desc">${s.d}</p>
+    <p class="status">${status}</p>
+    ${isCur ? '' : '<button class="link-btn" id="backNow">いまの節気へ戻る</button>'}`;
+  const back = $('backNow');
+  if (back) back.onclick = () => select(cur.y, cur.i, true);
+}
+
+function renderRing() {
+  const cx = 200, cy = 200, R = 138, RL = 172, gap = 1.4, rad = Math.PI / 180;
+  // 夏至を上、時計回りに季節が進む
+  const pt = (r, a) => [cx + r * Math.sin(a * rad), cy - r * Math.cos(a * rad)];
+  let h = '';
+  SEKKI.forEach((s, i) => {
+    const a0 = lonOf(i) - 90 + gap, a1 = lonOf(i) - 90 + 15 - gap;
+    const [x0, y0] = pt(R, a0), [x1, y1] = pt(R, a1), [lx, ly] = pt(RL, lonOf(i) - 90 + 7.5);
+    const d = `M${x0.toFixed(2)} ${y0.toFixed(2)}A${R} ${R} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+    h += `<g class="seg ${s.s}${i === sel.i ? ' sel' : ''}" data-i="${i}" tabindex="0" role="button" aria-label="${s.n}">
+      <path class="hit" d="${d}"/><path class="arc" d="${d}"/>
+      <text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${s.n}</text></g>`;
+  });
+  const lon = solarLongitude(now);
+  const [sx, sy] = pt(R, lon - 90), [ix, iy] = pt(R - 26, lon - 90);
+  h += `<line class="sun-line" x1="${ix.toFixed(1)}" y1="${iy.toFixed(1)}" x2="${sx.toFixed(1)}" y2="${sy.toFixed(1)}"/>
+    <circle class="sun-halo" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="9"/>
+    <circle class="sun" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="5"><title>現在の太陽の位置</title></circle>
+    <text class="ring-season" x="200" y="180">${SEASON_JP[SEKKI[sel.i].s]}</text>
+    <text class="ring-cap" x="200" y="238">現在の太陽黄経</text>
+    <text class="ring-val" x="200" y="260">${lon.toFixed(1)}°</text>`;
+  $('ring').innerHTML = h;
+}
+
+function renderCalendar() {
+  $('calLabel').textContent = `${calY}年 ${calM + 1}月`;
+  const first = new Date(Date.UTC(calY, calM, 1)).getUTCDay();
+  const days = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
+  const marks = {};
+  termsOf(calY).forEach((t, i) => { const j = jst(t); if (j.m === calM) marks[j.d] = i; });
+  const from = dayNo(timeOf(sel)), to = dayNo(timeOf(nextOf(sel)));
+
+  let h = DOW.map(w => `<div class="dow">${w}</div>`).join('');
+  for (let k = 0; k < first; k++) h += '<div class="day blank"></div>';
+  for (let d = 1; d <= days; d++) {
+    const w = (first + d - 1) % 7, no = Date.UTC(calY, calM, d) / DAY;
+    let cls = 'day';
+    if (w === 0) cls += ' sun';
+    if (w === 6) cls += ' sat';
+    if (no >= from && no < to) cls += ' in';
+    if (calY === today.y && calM === today.m && d === today.d) cls += ' today';
+    if (d in marks) {
+      const s = SEKKI[marks[d]];
+      h += `<button class="${cls} ${s.s}" data-i="${marks[d]}"><span class="d">${d}</span><span class="term">${s.n}</span></button>`;
+    } else {
+      h += `<div class="${cls}"><span class="d">${d}</span></div>`;
+    }
+  }
+  for (let k = (first + days) % 7; k > 0 && k < 7; k++) h += '<div class="day blank"></div>';
+  $('cal').innerHTML = h;
+}
+
+function renderList() {
+  $('yearLabel').textContent = `${sel.y}年`;
+  const terms = termsOf(sel.y);
+  $('list').innerHTML = SEKKI.map((s, i) => {
+    const t = { y: sel.y, i };
+    const isCur = isSame(t, cur);
+    let cls = `item ${s.s}`;
+    if (i === sel.i) cls += ' sel';
+    if (!isCur && terms[i] < now) cls += ' past';
+    return `<button class="${cls}" data-i="${i}">
+      <span class="n">${s.n}</span><span class="r">${s.r}</span>
+      ${isCur ? '<span class="now">いま</span>' : ''}
+      <span class="dt">${fmtDateW(terms[i])} ${fmtTime(terms[i])}頃</span></button>`;
+  }).join('');
+}
+
+function render() {
+  $('today').textContent = `${today.y}.${pad(today.m + 1)}.${pad(today.d)}（${DOW[today.w]}）`;
+  renderHero(); renderRing(); renderCalendar(); renderList();
+}
+
+// ===== 操作 =====
+function pick(e, sel_, fn) {
+  const el = e.target.closest(sel_);
+  if (el) fn(+el.dataset.i);
+}
+$('ring').addEventListener('click', e => pick(e, '.seg', i => select(sel.y, i, true)));
+$('ring').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  e.preventDefault();
+  pick(e, '.seg', i => { select(sel.y, i, true); $('ring').querySelector(`[data-i="${i}"]`).focus(); });
+});
+$('cal').addEventListener('click', e => pick(e, 'button.day', i => select(calY, i, false)));
+$('list').addEventListener('click', e => pick(e, '.item', i => select(sel.y, i, true)));
+
+function moveMonth(step) {
+  calM += step;
+  if (calM < 0) { calM = 11; calY--; }
+  if (calM > 11) { calM = 0; calY++; }
+  renderCalendar();
+}
+$('calPrev').onclick = () => moveMonth(-1);
+$('calNext').onclick = () => moveMonth(1);
+$('calToday').onclick = () => { calY = today.y; calM = today.m; select(cur.y, cur.i, false); };
+$('yearPrev').onclick = () => select(sel.y - 1, sel.i, true);
+$('yearNext').onclick = () => select(sel.y + 1, sel.i, true);
+
+render();
+</script>
+</body>
+</html>
