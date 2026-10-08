@@ -68,6 +68,13 @@
     .instant { margin-top: 6px; font-size: 12px; color: var(--sub); font-variant-numeric: tabular-nums; }
     .rule { width: 36px; height: 2px; background: var(--accent); margin: 24px 0 20px; }
     .desc { font-family: var(--mincho); font-size: 15px; line-height: 2.05; max-width: 26em; }
+    .kou { margin-top: 18px; display: flex; gap: 14px; align-items: baseline; max-width: 30em; }
+    .kou-label { flex-shrink: 0; font-size: 10px; letter-spacing: 0.2em; color: var(--sub); }
+    .kou-name { font-family: var(--mincho); font-size: 16px; font-weight: 500; letter-spacing: 0.12em; }
+    .kou-reading { font-size: 10px; letter-spacing: 0.12em; color: var(--faint); margin-left: 8px; }
+    .kou-mean { display: block; margin-top: 4px; font-size: 12px; color: var(--sub); }
+    .kou-names { font-family: var(--mincho); font-size: 14px; letter-spacing: 0.12em; color: var(--sub); line-height: 1.8; }
+    .kou-names i { font-style: normal; color: var(--faint); margin: 0 6px; }
     .status { margin-top: 22px; font-size: 13px; color: var(--sub); line-height: 1.8; }
     .status b { color: var(--ink); font-weight: 600; }
     .status .num { font-size: 26px; font-weight: 300; color: var(--accent); margin: 0 4px; font-variant-numeric: tabular-nums; }
@@ -205,7 +212,8 @@
 
   <footer>
     節気の日時は、太陽黄経が15°刻みの値になる瞬間を天文計算で求め、日本標準時で表示しています。<br>
-    時刻には15分程度の誤差があり、節気の瞬間が午前0時に近い年は、国立天文台の発表と日付が1日ずれることがあります。
+    時刻には15分程度の誤差があり、節気の瞬間が午前0時に近い年は、国立天文台の発表と日付が1日ずれることがあります。<br>
+    七十二候は略本暦の名称で、各節気を太陽黄経5°ごとに三つに分けています。
   </footer>
 </div>
 
@@ -237,6 +245,33 @@ const SEKKI = [
   { n: '大雪', r: 'たいせつ',   s: 'winter', d: '本格的に雪が降りはじめる頃。山は雪に覆われ、平地にも冬の寒さが訪れる。' },
   { n: '冬至', r: 'とうじ',     s: 'winter', d: '一年で昼がもっとも短く、夜がもっとも長い日。この日を境に、日は再び長くなっていく。' },
 ];
+// 七十二候（略本暦）。各節気の初候・次候・末候を「名称|読み|意味」で持つ
+const KOU = [
+  ['芹乃栄|せりすなわちさかう|芹がよく育つ', '水泉動|しみずあたたかをふくむ|地中で凍った泉が動きはじめる', '雉始雊|きじはじめてなく|雄の雉が鳴きはじめる'],
+  ['款冬華|ふきのはなさく|蕗の薹が蕾を出す', '水沢腹堅|さわみずこおりつめる|沢に氷が厚く張りつめる', '鶏始乳|にわとりはじめてとやにつく|鶏が卵を産みはじめる'],
+  ['東風解凍|はるかぜこおりをとく|東風が厚い氷を解かしはじめる', '黄鶯睍睆|うぐいすなく|鶯が山里で鳴きはじめる', '魚上氷|うおこおりをいずる|割れた氷の間から魚が跳ね上がる'],
+  ['土脉潤起|つちのしょううるおいおこる|雨が降って土が湿り気を含む', '霞始靆|かすみはじめてたなびく|霞がたなびきはじめる', '草木萌動|そうもくめばえいずる|草木が芽吹きはじめる'],
+  ['蟄虫啓戸|すごもりむしとをひらく|冬ごもりの虫が土から出てくる', '桃始笑|ももはじめてさく|桃の花が咲きはじめる', '菜虫化蝶|なむしちょうとなる|青虫が羽化して紋白蝶になる'],
+  ['雀始巣|すずめはじめてすくう|雀が巣を構えはじめる', '桜始開|さくらはじめてひらく|桜の花が咲きはじめる', '雷乃発声|かみなりすなわちこえをはっす|遠くで雷の音がしはじめる'],
+  ['玄鳥至|つばめきたる|燕が南からやってくる', '鴻雁北|こうがんかえる|雁が北へ渡っていく', '虹始見|にじはじめてあらわる|雨のあとに虹が出はじめる'],
+  ['葭始生|あしはじめてしょうず|葦が芽を吹きはじめる', '霜止出苗|しもやみてなえいずる|霜が終わり稲の苗が育つ', '牡丹華|ぼたんはなさく|牡丹の花が咲く'],
+  ['蛙始鳴|かわずはじめてなく|蛙が鳴きはじめる', '蚯蚓出|みみずいずる|蚯蚓が地上に這い出る', '竹笋生|たけのこしょうず|筍が生えてくる'],
+  ['蚕起食桑|かいこおきてくわをはむ|蚕が桑を盛んに食べはじめる', '紅花栄|べにばなさかう|紅花が盛んに咲く', '麦秋至|むぎのときいたる|麦が熟して収穫の時を迎える'],
+  ['蟷螂生|かまきりしょうず|蟷螂が生まれ出る', '腐草為蛍|くされたるくさほたるとなる|蛍が光を放って飛びはじめる', '梅子黄|うめのみきばむ|梅の実が黄ばんで熟す'],
+  ['乃東枯|なつかれくさかるる|夏枯草が枯れる', '菖蒲華|あやめはなさく|あやめの花が咲く', '半夏生|はんげしょうず|烏柄杓が生える'],
+  ['温風至|あつかぜいたる|暖かい風が吹いてくる', '蓮始開|はすはじめてひらく|蓮の花が開きはじめる', '鷹乃学習|たかすなわちわざをならう|鷹の幼鳥が飛ぶことを覚える'],
+  ['桐始結花|きりはじめてはなをむすぶ|桐の実がなりはじめる', '土潤溽暑|つちうるおうてむしあつし|土が湿って蒸し暑くなる', '大雨時行|たいうときどきふる|ときおり大雨が降る'],
+  ['涼風至|すずかぜいたる|涼しい風が立ちはじめる', '寒蝉鳴|ひぐらしなく|蜩が鳴きはじめる', '蒙霧升降|ふかききりまとう|深い霧が立ちこめる'],
+  ['綿柎開|わたのはなしべひらく|綿を包む萼が開く', '天地始粛|てんちはじめてさむし|ようやく暑さが鎮まる', '禾乃登|こくものすなわちみのる|稲が実る'],
+  ['草露白|くさのつゆしろし|草に降りた露が白く光る', '鶺鴒鳴|せきれいなく|鶺鴒が鳴きはじめる', '玄鳥去|つばめさる|燕が南へ帰っていく'],
+  ['雷乃収声|かみなりすなわちこえをおさむ|雷が鳴り響かなくなる', '蟄虫坏戸|むしかくれてとをふさぐ|虫が土にもぐり穴をふさぐ', '水始涸|みずはじめてかるる|田の水を干しはじめる'],
+  ['鴻雁来|こうがんきたる|雁が北から渡ってくる', '菊花開|きくのはなひらく|菊の花が咲く', '蟋蟀在戸|きりぎりすとにあり|蟋蟀が戸口で鳴く'],
+  ['霜始降|しもはじめてふる|霜が降りはじめる', '霎時施|こさめときどきふる|小雨がしとしと降る', '楓蔦黄|もみじつたきばむ|もみじや蔦が色づく'],
+  ['山茶始開|つばきはじめてひらく|山茶花が咲きはじめる', '地始凍|ちはじめてこおる|大地が凍りはじめる', '金盞香|きんせんかさく|水仙の花が咲く'],
+  ['虹蔵不見|にじかくれてみえず|虹を見かけなくなる', '朔風払葉|きたかぜこのはをはらう|北風が木の葉を払いのける', '橘始黄|たちばなはじめてきばむ|橘の実が黄色くなりはじめる'],
+  ['閉塞成冬|そらさむくふゆとなる|天地の気が塞がって冬となる', '熊蟄穴|くまあなにこもる|熊が冬ごもりのために穴に入る', '鱖魚群|さけのうおむらがる|鮭が群がって川を上る'],
+  ['乃東生|なつかれくさしょうず|夏枯草が芽を出す', '麋角解|さわしかのつのおつる|大鹿が角を落とす', '雪下出麦|ゆきわたりてむぎのびる|雪の下で麦が芽を出す'],
+].map(g => g.map(k => { const [n, r, d] = k.split('|'); return { n, r, d }; }));
 const SEASON_JP = { spring: '春', summer: '夏', autumn: '秋', winter: '冬' };
 const DOW = ['日', '月', '火', '水', '木', '金', '土'];
 const DAY = 86400000, JST = 9 * 3600000;
@@ -287,6 +322,12 @@ const fmtDate = ms => { const j = jst(ms); return `${j.m + 1}月${j.d}日`; };
 const fmtDateW = ms => { const j = jst(ms); return `${j.m + 1}月${j.d}日（${DOW[j.w]}）`; };
 const fmtTime = ms => { const j = jst(ms); return `${j.h}:${pad(j.mi)}`; };
 
+// 現在の候（節気内の0〜2）。節気の起点から太陽黄経5°ごとに進む
+function currentKou(i, ms) {
+  const off = (solarLongitude(ms) - lonOf(i) + 360) % 360;
+  return Math.min(2, Math.floor(off / 5));
+}
+
 function nextOf(t) { return t.i < 23 ? { y: t.y, i: t.i + 1 } : { y: t.y + 1, i: 0 }; }
 const timeOf = t => termsOf(t.y)[t.i];
 
@@ -331,6 +372,15 @@ function renderHero() {
            : diff === 0 ? 'この節気は 今日からはじまります'
            : `この節気は<span class="num">${-diff}</span>日前にはじまりました`;
   }
+  let kou;
+  if (isCur) {
+    const k = KOU[sel.i][currentKou(sel.i, now)];
+    kou = `<span class="kou-label">いまの候</span>
+      <span><span class="kou-name">${k.n}</span><span class="kou-reading">${k.r}</span><span class="kou-mean">${k.d}</span></span>`;
+  } else {
+    kou = `<span class="kou-label">三候</span>
+      <span class="kou-names">${KOU[sel.i].map(k => `<span title="${k.r}｜${k.d}">${k.n}</span>`).join('<i>・</i>')}</span>`;
+  }
   $('heroText').innerHTML = `
     <div class="meta">
       <span class="season">${SEASON_JP[s.s]}</span><span>第${ordinalOf(sel.i)}節気</span><span>太陽黄経 ${lonOf(sel.i)}°</span>
@@ -340,6 +390,7 @@ function renderHero() {
     <div class="instant">${fmtDateW(start)} ${fmtTime(start)}頃に太陽黄経 ${lonOf(sel.i)}° を通過</div>
     <div class="rule"></div>
     <p class="desc">${s.d}</p>
+    <div class="kou">${kou}</div>
     <p class="status">${status}</p>
     ${isCur ? '' : '<button class="link-btn" id="backNow">いまの節気へ戻る</button>'}`;
   const back = $('backNow');
