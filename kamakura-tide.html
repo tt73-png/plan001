@@ -17,122 +17,113 @@
     }
     .container { max-width: 660px; margin: 0 auto; }
 
-    header { margin-bottom: 24px; }
-    header .location {
-      font-size: 13px; font-weight: 600; color: #2563eb;
-      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px;
+    /* ヒーロー（今日の月） */
+    .hero {
+      background: linear-gradient(180deg, #0b1626 0%, #17305a 100%);
+      color: #e2e8f0;
+      border-radius: 18px;
+      padding: 22px 20px 24px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 24px rgba(11,22,38,0.25);
+      text-align: center;
     }
-    .header-date-row { display: flex; align-items: baseline; gap: 12px; }
-    header h1 { font-size: 26px; font-weight: 300; color: #1a2b3c; letter-spacing: -0.5px; }
-    .tide-name-badge {
-      font-size: 26px; font-weight: 300; letter-spacing: -0.5px;
-      color: #2563eb; background: #eff6ff; padding: 2px 14px; border-radius: 20px;
+    .hero-head { text-align: left; }
+    .location {
+      font-size: 12px; font-weight: 600; color: #93c5fd;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .hero-date { font-size: 24px; font-weight: 300; letter-spacing: -0.3px; color: #f8fafc; }
+    .hero-date small { font-size: 14px; color: #94a3b8; margin-left: 6px; }
+
+    .moon-strip {
+      display: flex; align-items: center; justify-content: center;
+      gap: clamp(4px, 1.6vw, 16px);
+      margin: 22px 0 14px;
+    }
+    .ms-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .ms-item svg { display: block; height: auto; }
+    .ms-item.d0 svg { width: min(136px, 26vw); }
+    .ms-item.d1 svg { width: min(46px, 10vw); }
+    .ms-item.d2 svg { width: min(36px, 8vw); }
+    .ms-item.d3 svg { width: min(28px, 6.5vw); }
+    .ms-item.d1 { opacity: 0.85; }
+    .ms-item.d2 { opacity: 0.7; }
+    .ms-item.d3 { opacity: 0.55; }
+    .ms-day { font-size: 11px; color: #94a3b8; line-height: 1; }
+    .ms-item.d0 .ms-day { font-size: 12px; font-weight: 700; color: #fde68a; }
+
+    .hero-info {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 8px 14px;
+    }
+    .moon-name { font-size: 30px; font-weight: 300; color: #fef3c7; letter-spacing: 0.04em; }
+    .moon-age  { font-size: 13px; color: #94a3b8; }
+    .tide-badge {
+      font-size: 15px; font-weight: 600; letter-spacing: 0.06em;
+      color: #bfdbfe; background: rgba(59,130,246,0.25);
+      border: 1px solid rgba(147,197,253,0.4);
+      padding: 4px 14px; border-radius: 20px;
     }
 
+    /* タイムライン */
     .card {
-      background: #fff; border-radius: 14px; padding: 22px 24px;
+      background: #fff; border-radius: 14px; padding: 20px 20px 18px;
       margin-bottom: 14px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
     }
     .card-label {
       font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: #94a3b8; margin-bottom: 18px;
+      color: #94a3b8; margin-bottom: 10px;
     }
+    .graph-wrap { width: 100%; }
+    #timeline { width: 100%; display: block; }
 
-    /* 日照 */
-    .sun-row { display: flex; gap: 36px; }
-    .sun-item { display: flex; align-items: center; gap: 14px; }
-    .sun-icon {
-      width: 44px; height: 44px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    .events {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 8px; margin-top: 12px;
     }
-    .sun-icon.rise { background: #fefce8; color: #d97706; }
-    .sun-icon.set  { background: #fff1f2; color: #ea580c; }
-    .sun-meta-label { font-size: 11px; color: #94a3b8; margin-bottom: 2px; }
-    .sun-meta-time { font-size: 28px; font-weight: 200; letter-spacing: -1px; color: #1a2b3c; }
+    .ev { background: #f8fafc; border-radius: 10px; padding: 10px 6px; text-align: center; }
+    .ev.past { opacity: 0.45; }
+    .ev.next { background: #eff6ff; outline: 2px solid #2563eb; }
+    .ev-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 4px; }
+    .ev-label.rise { color: #d97706; }
+    .ev-label.set  { color: #ea580c; }
+    .ev-label.high { color: #2563eb; }
+    .ev-label.low  { color: #64748b; }
+    .ev-time { font-size: 19px; font-weight: 300; letter-spacing: -0.5px; }
+    .ev-sub  { font-size: 11px; color: #94a3b8; margin-top: 2px; min-height: 1em; }
 
-    /* 潮汐 */
-    .tide-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .tide-cell { background: #f8fafc; border-radius: 10px; padding: 14px 10px; text-align: center; }
-    .tide-cell-type { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
-    .tide-cell-type.high { color: #2563eb; }
-    .tide-cell-type.low  { color: #64748b; }
-    .tide-cell-time { font-size: 20px; font-weight: 200; letter-spacing: -0.5px; color: #1a2b3c; }
-    .tide-cell-height { font-size: 11px; color: #94a3b8; margin-top: 5px; }
-
-    /* グラフ */
-    .graph-wrap { width: 100%; overflow: hidden; }
-    #tide-graph { width: 100%; display: block; }
-
-    .loading { color: #94a3b8; font-size: 13px; padding: 20px 0; }
+    @media (max-width: 480px) {
+      body { padding: 16px; }
+      .hero { padding: 18px 14px 20px; }
+      .card { padding: 16px 12px 14px; }
+      .moon-name { font-size: 26px; }
+    }
   </style>
 </head>
 <body>
 <div class="container">
 
-  <header>
-    <div class="location">Kamakura, Kanagawa</div>
-    <div class="header-date-row">
-      <h1 id="date-display">—</h1>
-      <div class="tide-name-badge" id="tide-name">—</div>
+  <section class="hero">
+    <div class="hero-head">
+      <div class="location">Kamakura, Kanagawa</div>
+      <div class="hero-date" id="date-display">—</div>
     </div>
-  </header>
-
-  <!-- 日の出・日の入り -->
-  <div class="card">
-    <div class="card-label">日照</div>
-    <div class="sun-row">
-      <div class="sun-item">
-        <div class="sun-icon rise">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="2" y1="14" x2="20" y2="14"/>
-            <path d="M 5 14 A 6 6 0 0 1 17 14"/>
-            <line x1="11" y1="2" x2="11" y2="5"/>
-            <line x1="4" y1="5.5" x2="6" y2="7.5"/>
-            <line x1="18" y1="5.5" x2="16" y2="7.5"/>
-            <polyline points="9,18 11,16 13,18"/>
-          </svg>
-        </div>
-        <div>
-          <div class="sun-meta-label">日の出</div>
-          <div class="sun-meta-time" id="sunrise">—</div>
-        </div>
-      </div>
-      <div class="sun-item">
-        <div class="sun-icon set">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="2" y1="14" x2="20" y2="14"/>
-            <path d="M 5 14 A 6 6 0 0 1 17 14"/>
-            <line x1="11" y1="2" x2="11" y2="5"/>
-            <line x1="4" y1="5.5" x2="6" y2="7.5"/>
-            <line x1="18" y1="5.5" x2="16" y2="7.5"/>
-            <polyline points="9,16 11,18 13,16"/>
-          </svg>
-        </div>
-        <div>
-          <div class="sun-meta-label">日の入り</div>
-          <div class="sun-meta-time" id="sunset">—</div>
-        </div>
-      </div>
+    <div class="moon-strip" id="moon-strip"></div>
+    <div class="hero-info">
+      <span class="moon-name" id="moon-name">—</span>
+      <span class="moon-age" id="moon-age"></span>
+      <span class="tide-badge" id="tide-name">—</span>
     </div>
-  </div>
+  </section>
 
-  <!-- 満潮・干潮 -->
   <div class="card">
-    <div class="card-label">潮汐</div>
-    <div class="tide-grid" id="tide-grid">
-      <div class="loading">計算中...</div>
-    </div>
-  </div>
-
-  <!-- タイドグラフ -->
-  <div class="card">
-    <div class="card-label">タイドグラフ</div>
+    <div class="card-label">今日のタイムライン</div>
     <div class="graph-wrap">
-      <svg id="tide-graph" viewBox="0 0 620 190" xmlns="http://www.w3.org/2000/svg"></svg>
+      <svg id="timeline" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
+    <div class="events" id="events"></div>
   </div>
 
 </div>
@@ -140,8 +131,9 @@
 // ============================================================
 // 定数
 // ============================================================
-const LAT = 35.3167, LON = 139.5500; // 鎌倉
-const JST_OFFSET = 9;                 // UTC+9
+const LAT = 35.3167, LON = 139.5500;
+const JST_OFFSET = 9;
+const SYNODIC = 29.53059;
 
 // 横須賀 潮汐調和定数 [名称, 角速度(°/h), 振幅(cm), 遅角(°)]
 const CONSTITUENTS = [
@@ -155,9 +147,8 @@ const CONSTITUENTS = [
   ['Q1', 13.3986609,  3.89, 150.73],
   ['Sa',  0.0410686,  8.99, 164.16],
 ];
-const Z0_CM = 110; // 平均水面（基準面からの高さ cm）
-
-const J2000 = new Date(Date.UTC(2000, 0, 1, 12)); // J2000.0 基準
+const Z0_CM = 110;
+const J2000 = new Date(Date.UTC(2000, 0, 1, 12));
 
 // ============================================================
 // 天文計算
@@ -170,18 +161,16 @@ function daysFromJ2000(date) {
   return (date.getTime() - J2000.getTime()) / 86400000;
 }
 
-// 天文引数（度）を d（J2000からの日数）から計算
 function astroArgs(d) {
   return {
-    s:  mod360(218.3164477 + 13.17639648 * d), // 月の平均黄経
-    h:  mod360(280.4664567 +  0.98564736 * d), // 太陽の平均黄経
-    p:  mod360( 83.3532465 +  0.11140353 * d), // 月の近地点黄経
-    N:  mod360(125.0445479 -  0.05295377 * d), // 月の昇交点黄経
-    p1: mod360(282.9373481 +  0.00004711 * d), // 太陽の近日点黄経
+    s:  mod360(218.3164477 + 13.17639648 * d),
+    h:  mod360(280.4664567 +  0.98564736 * d),
+    p:  mod360( 83.3532465 +  0.11140353 * d),
+    N:  mod360(125.0445479 -  0.05295377 * d),
+    p1: mod360(282.9373481 +  0.00004711 * d),
   };
 }
 
-// 各分潮の位相 V0 を計算（基準は UTC 0時）
 function calcV0(a) {
   return {
     M2: mod360(2*a.h - 2*a.s),
@@ -196,7 +185,6 @@ function calcV0(a) {
   };
 }
 
-// t 時間後（UTC 0時から）の潮位を cm で返す
 function tideAt(t_utc, V0) {
   let h = Z0_CM;
   for (const [name, speed, amp, g] of CONSTITUENTS) {
@@ -206,15 +194,17 @@ function tideAt(t_utc, V0) {
 }
 
 // ============================================================
-// 潮名（月齢から計算）
+// 月・潮名
 // ============================================================
+// 0=新月, 180=満月
+function moonPhaseAngle(date) {
+  const a = astroArgs(daysFromJ2000(date));
+  return mod360(a.s - a.h);
+}
+
 function getTideName(date) {
-  const d = daysFromJ2000(date);
-  const a = astroArgs(d);
-  const phase = mod360(a.s - a.h); // 月と太陽の黄経差
-  // 朔（0°）または望（180°）からの経過日数
-  const daysFromSyzygy = (phase % 180) / (360 / 29.53059);
-  const day = Math.floor(daysFromSyzygy) + 1;
+  const phase = moonPhaseAngle(date);
+  const day = Math.floor((phase % 180) / (360 / SYNODIC)) + 1;
   if (day <= 2)   return '大潮';
   if (day <= 5)   return '中潮';
   if (day <= 8)   return '小潮';
@@ -224,192 +214,239 @@ function getTideName(date) {
   return '大潮';
 }
 
+function moonName(age) {
+  if (age < 1.5)  return '新月';
+  if (age < 5.5)  return '三日月';
+  if (age < 9.5)  return '上弦の月';
+  if (age < 13.5) return '十三夜';
+  if (age < 16.5) return '満月';
+  if (age < 20.5) return '寝待月';
+  if (age < 24.5) return '下弦の月';
+  if (age < 28.0) return '有明月';
+  return '新月';
+}
+
+// 北半球の見え方（満ちる月は右側が光る）
+function moonSVG(phase, glow) {
+  const c = 50, r = 46;
+  const illum  = (1 - Math.cos(phase * DEG)) / 2;
+  const waxing = phase < 180;
+  const ex     = Math.max(0.01, Math.abs(Math.cos(phase * DEG)) * r).toFixed(2);
+  const lit    = glow ? 'url(#moonLit)' : '#fcd34d';
+
+  let defs = '', halo = '';
+  if (glow) {
+    defs = `<defs>
+      <radialGradient id="moonLit" cx="40%" cy="35%" r="75%">
+        <stop offset="0%" stop-color="#fffbe8"/><stop offset="100%" stop-color="#f6c344"/>
+      </radialGradient>
+      <filter id="moonGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="5"/>
+      </filter></defs>`;
+    halo = `<circle cx="${c}" cy="${c}" r="${r}" fill="#fcd34d"
+              opacity="${(0.15 + illum * 0.45).toFixed(2)}" filter="url(#moonGlow)"/>`;
+  }
+
+  let body = `<circle cx="${c}" cy="${c}" r="${r}" fill="#24324a"/>`;
+  if (illum > 0.99) {
+    body += `<circle cx="${c}" cy="${c}" r="${r}" fill="${lit}"/>`;
+  } else if (illum > 0.01) {
+    const outer = waxing ? 1 : 0;
+    const term  = waxing ? (illum < 0.5 ? 0 : 1) : (illum < 0.5 ? 1 : 0);
+    body += `<path d="M ${c},${c-r} A ${r},${r} 0 0 ${outer} ${c},${c+r}
+                       A ${ex},${r} 0 0 ${term} ${c},${c-r} Z" fill="${lit}"/>`;
+  }
+  return `<svg viewBox="-8 -8 116 116" xmlns="http://www.w3.org/2000/svg">${defs}${halo}${body}</svg>`;
+}
+
+function renderMoonStrip(Y, M, D) {
+  const WDAYS = ['日','月','火','水','木','金','土'];
+  let html = '';
+  for (let k = -3; k <= 3; k++) {
+    const dt    = new Date(Date.UTC(Y, M, D + k, 3)); // JST 正午
+    const phase = moonPhaseAngle(dt);
+    const label = k === 0 ? '今日' : `${dt.getUTCDate()}<small>${WDAYS[dt.getUTCDay()]}</small>`;
+    html += `<div class="ms-item d${Math.abs(k)}">
+               ${moonSVG(phase, k === 0)}
+               <div class="ms-day">${label}</div>
+             </div>`;
+  }
+  document.getElementById('moon-strip').innerHTML = html;
+}
+
 // ============================================================
 // ユーティリティ
 // ============================================================
-function toJSTHHMM(date) {
-  // UTC の Date を JST で HH:MM に変換
+function toJSTHours(date) {
   const jst = new Date(date.getTime() + JST_OFFSET * 3600000);
-  return String(jst.getUTCHours()).padStart(2, '0') + ':' +
-         String(jst.getUTCMinutes()).padStart(2, '0');
+  return jst.getUTCHours() + jst.getUTCMinutes() / 60;
+}
+
+function hhmm(t) {
+  let m = Math.round(t * 60);
+  return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+}
+
+// ============================================================
+// タイムライン（日照帯 + 潮汐曲線 + 現在時刻）
+// ============================================================
+let tl = null;
+
+function drawTimeline() {
+  const { heights, shift, extremes, sunriseH, sunsetH, nowH } = tl;
+  const svg = document.getElementById('timeline');
+  const W = Math.max(280, Math.round(svg.parentElement.clientWidth));
+  const narrow = W < 480;
+  const H  = narrow ? 240 : 280;
+  const PL = narrow ? 26 : 32, PR = 8, PT = 44, PB = 46;
+  const GW = W - PL - PR, GH = H - PT - PB;
+  const base = PT + GH;
+
+  const maxDisp = Math.max(...heights.map(p => p.h + shift));
+  const MAX = Math.max(200, Math.ceil((maxDisp + 40) / 50) * 50);
+  const tx  = t  => PL + (t / 24) * GW;
+  const tyC = cm => base - (Math.max(0, cm) / MAX) * GH;
+  const ty  = h  => tyC(h + shift);
+
+  const F  = 'font-family="-apple-system,BlinkMacSystemFont,sans-serif"';
+  const HALO = 'paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round"';
+  let s = `<defs>
+    <linearGradient id="tideGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.04"/>
+    </linearGradient></defs>`;
+
+  // 夜・昼の背景帯
+  const xr = tx(sunriseH), xs = tx(sunsetH);
+  s += `<rect x="${PL}" y="${PT}" width="${(xr - PL).toFixed(1)}" height="${GH}" fill="#e6ebf3"/>`;
+  s += `<rect x="${xr.toFixed(1)}" y="${PT}" width="${(xs - xr).toFixed(1)}" height="${GH}" fill="#fffbeb"/>`;
+  s += `<rect x="${xs.toFixed(1)}" y="${PT}" width="${(W - PR - xs).toFixed(1)}" height="${GH}" fill="#e6ebf3"/>`;
+
+  // 目盛り
+  for (let cm = 50; cm < MAX; cm += 50) {
+    const y = tyC(cm).toFixed(1);
+    s += `<line x1="${PL}" y1="${y}" x2="${W - PR}" y2="${y}" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="2 4"/>
+          <text x="${PL - 5}" y="${(+y + 4).toFixed(1)}" text-anchor="end" fill="#94a3b8" font-size="10" ${F}>${(cm / 100).toFixed(1)}</text>`;
+  }
+  const step = narrow ? 6 : 3;
+  for (let h = 0; h <= 24; h += step) {
+    s += `<text x="${tx(h).toFixed(1)}" y="${base + 15}" text-anchor="middle" fill="#94a3b8" font-size="10.5" ${F}>${String(h).padStart(2, '0')}</text>`;
+  }
+  s += `<line x1="${PL}" y1="${base}" x2="${W - PR}" y2="${base}" stroke="#cbd5e1"/>`;
+
+  // 潮汐曲線
+  const line = heights.map((p, i) => `${i ? 'L' : 'M'}${tx(p.t).toFixed(1)},${ty(p.h).toFixed(1)}`).join(' ');
+  s += `<path d="${line} L${tx(24).toFixed(1)},${base} L${PL},${base} Z" fill="url(#tideGrad)"/>`;
+  s += `<path d="${line}" fill="none" stroke="#2563eb" stroke-width="2.4" stroke-linejoin="round"/>`;
+
+  // 日の出・日の入り
+  [[sunriseH, '日の出', '#d97706'], [sunsetH, '日の入り', '#ea580c']].forEach(([t, label, col]) => {
+    const x = tx(t).toFixed(1);
+    s += `<line x1="${x}" y1="${PT}" x2="${x}" y2="${base}" stroke="${col}" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.8"/>
+          <circle cx="${x}" cy="${base}" r="4" fill="${col}" stroke="#fff" stroke-width="1.5"/>
+          <text x="${x}" y="${base + 33}" text-anchor="middle" fill="${col}" font-size="11" font-weight="600" ${F}>${label} ${hhmm(t)}</text>`;
+  });
+
+  // 満潮・干潮（ラベルは点の上の空き領域に置く）
+  extremes.forEach(e => {
+    const x = tx(e.t), y = ty(e.h);
+    const col = e.type === 'high' ? '#2563eb' : '#475569';
+    const lx = Math.min(Math.max(x, PL + 18), W - PR - 18).toFixed(1);
+    s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${col}" stroke="#fff" stroke-width="2"/>
+          <text x="${lx}" y="${(y - 23).toFixed(1)}" text-anchor="middle" fill="${col}" font-size="12" font-weight="700" ${HALO} ${F}>${e.type === 'high' ? '満' : '干'} ${hhmm(e.t)}</text>
+          <text x="${lx}" y="${(y - 10).toFixed(1)}" text-anchor="middle" fill="#64748b" font-size="10.5" ${HALO} ${F}>${((e.h + shift) / 100).toFixed(1)}m</text>`;
+  });
+
+  // 現在時刻
+  const idx   = Math.min(Math.max(Math.round(nowH / 24 * (heights.length - 1)), 1), heights.length - 2);
+  const nowCm = heights[idx].h;
+  const rising = heights[idx + 1].h > heights[idx - 1].h;
+  const nx = tx(nowH), ny = ty(nowCm);
+  const anchor = nx < W * 0.3 ? 'start' : (nx > W * 0.7 ? 'end' : 'middle');
+  const nlx = Math.min(Math.max(nx, 4), W - 4).toFixed(1);
+  s += `<line x1="${nx.toFixed(1)}" y1="24" x2="${nx.toFixed(1)}" y2="${base}" stroke="#ef4444" stroke-width="1.5"/>
+        <circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="6" fill="#ef4444" stroke="#fff" stroke-width="2.5"/>
+        <text x="${nlx}" y="16" text-anchor="${anchor}" fill="#ef4444" font-size="12" font-weight="700" ${HALO} ${F}>現在 ${hhmm(nowH)}・${((nowCm + shift) / 100).toFixed(1)}m ${rising ? '↑上げ潮' : '↓下げ潮'}</text>`;
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('height', H);
+  svg.innerHTML = s;
+}
+
+function renderEvents(sunriseH, sunsetH, extremes, shift, nowH) {
+  const evts = [
+    { t: sunriseH, kind: 'rise', label: '日の出', sub: '' },
+    { t: sunsetH,  kind: 'set',  label: '日の入り', sub: '' },
+    ...extremes.map(e => ({
+      t: e.t, kind: e.type,
+      label: e.type === 'high' ? '満潮' : '干潮',
+      sub: ((e.h + shift) / 100).toFixed(1) + ' m',
+    })),
+  ].sort((a, b) => a.t - b.t);
+
+  const nextIdx = evts.findIndex(e => e.t > nowH);
+  document.getElementById('events').innerHTML = evts.map((e, i) => {
+    const cls = i === nextIdx ? 'next' : (e.t <= nowH ? 'past' : '');
+    return `<div class="ev ${cls}">
+              <div class="ev-label ${e.kind}">${e.label}</div>
+              <div class="ev-time">${hhmm(e.t)}</div>
+              <div class="ev-sub">${e.sub}</div>
+            </div>`;
+  }).join('');
 }
 
 // ============================================================
 // メイン
 // ============================================================
 function main() {
-  // JST での今日の日付を取得
   const nowJST = new Date(Date.now() + JST_OFFSET * 3600000);
   const Y = nowJST.getUTCFullYear();
   const M = nowJST.getUTCMonth();
   const D = nowJST.getUTCDate();
+  const nowH = nowJST.getUTCHours() + nowJST.getUTCMinutes() / 60;
 
-  // 日付表示
   const WDAYS = ['日','月','火','水','木','金','土'];
-  const wday = WDAYS[nowJST.getUTCDay()];
-  document.getElementById('date-display').textContent =
-    `${Y}年${M + 1}月${D}日（${wday}）`;
+  document.getElementById('date-display').innerHTML =
+    `${M + 1}月${D}日（${WDAYS[nowJST.getUTCDay()]}）<small>${Y}</small>`;
 
-  // 潮名（正午 JST で計算）
-  const noonJST = new Date(Date.UTC(Y, M, D, 3)); // 03:00 UTC = 12:00 JST
-  document.getElementById('tide-name').textContent = getTideName(noonJST);
+  // 月
+  const noon  = new Date(Date.UTC(Y, M, D, 3));
+  const phase = moonPhaseAngle(noon);
+  const age   = phase / 360 * SYNODIC;
+  renderMoonStrip(Y, M, D);
+  document.getElementById('moon-name').textContent = moonName(age);
+  document.getElementById('moon-age').textContent  = `月齢 ${age.toFixed(1)}`;
+  document.getElementById('tide-name').textContent = getTideName(noon);
 
-  // ── 日の出・日の入り（SunCalc） ──
-  const sunDate = new Date(Date.UTC(Y, M, D, 3)); // 正午 JST を UTC で渡す
-  const sunTimes = SunCalc.getTimes(sunDate, LAT, LON);
-  document.getElementById('sunrise').textContent = toJSTHHMM(sunTimes.sunrise);
-  document.getElementById('sunset').textContent  = toJSTHHMM(sunTimes.sunset);
+  // 日照
+  const sunTimes = SunCalc.getTimes(noon, LAT, LON);
+  const sunriseH = toJSTHours(sunTimes.sunrise);
+  const sunsetH  = toJSTHours(sunTimes.sunset);
 
-  // ── 潮汐計算 ──
-  // 基準: JST 当日の UTC 0時（= JST 09:00）
-  // JST 0〜24時 = UTC -9〜+15 時
-  const utcRef = new Date(Date.UTC(Y, M, D, 0)); // UTC 0時
-  const d_ref  = daysFromJ2000(utcRef);
-  const V0     = calcV0(astroArgs(d_ref));
-
-  // 5分刻みで JST 0〜24時分の潮位を計算
-  // t_utc は UTC 0時からの時間（-9 〜 +15）
+  // 潮汐（5分刻み）
+  const V0 = calcV0(astroArgs(daysFromJ2000(new Date(Date.UTC(Y, M, D, 0)))));
   const STEPS = 288;
   const heights = [];
   for (let i = 0; i <= STEPS; i++) {
-    const t_jst = (i / STEPS) * 24;        // JST 時刻（0〜24）
-    const t_utc = t_jst - JST_OFFSET;      // UTC 換算
-    heights.push({ t: t_jst, h: tideAt(t_utc, V0) });
+    const t = (i / STEPS) * 24;
+    heights.push({ t, h: tideAt(t - JST_OFFSET, V0) });
   }
-
-  // 極値を検出（満潮・干潮）
   const extremes = [];
   for (let i = 1; i < heights.length - 1; i++) {
     const p = heights[i-1].h, c = heights[i].h, n = heights[i+1].h;
     if (c > p && c > n) extremes.push({ t: heights[i].t, h: c, type: 'high' });
     else if (c < p && c < n) extremes.push({ t: heights[i].t, h: c, type: 'low' });
   }
-
-  // 表示用: 潮高を cm → m に変換し、Z0 オフセットを除去して表示範囲を整える
-  // (Z0=110cm を引いて相対高さにし、最小値が 0m 以上になるよう底上げ)
   const rawMin = Math.min(...heights.map(p => p.h));
-  const shift  = Math.max(0, -rawMin + 10); // 最小が 10cm 以上になるようシフト
+  const shift  = Math.max(0, -rawMin + 10);
 
-  function dispH(h_cm) { return ((h_cm + shift) / 100).toFixed(1); }
-
-  // 満潮・干潮カード
-  const grid = document.getElementById('tide-grid');
-  grid.innerHTML = '';
-  if (extremes.length === 0) {
-    grid.innerHTML = '<div class="loading">データなし</div>';
-  } else {
-    extremes.forEach(e => {
-      const hJST = Math.floor(e.t);
-      const mJST = Math.round((e.t - hJST) * 60);
-      const timeStr = String(hJST).padStart(2,'0') + ':' + String(mJST).padStart(2,'0');
-      const label = e.type === 'high' ? '満潮' : '干潮';
-      const cls   = e.type === 'high' ? 'high' : 'low';
-      grid.innerHTML += `
-        <div class="tide-cell">
-          <div class="tide-cell-type ${cls}">${label}</div>
-          <div class="tide-cell-time">${timeStr}</div>
-          <div class="tide-cell-height">${dispH(e.h)} m</div>
-        </div>`;
-    });
-  }
-
-  // ── タイドグラフ ──
-  const sunriseH = toJSTHours(sunTimes.sunrise);
-  const sunsetH  = toJSTHours(sunTimes.sunset);
-  drawGraph(heights, shift, extremes, sunriseH, sunsetH);
-}
-
-function toJSTHours(date) {
-  const jst = new Date(date.getTime() + JST_OFFSET * 3600000);
-  return jst.getUTCHours() + jst.getUTCMinutes() / 60;
-}
-
-// ============================================================
-// グラフ描画
-// ============================================================
-function drawGraph(heights, shift, extremes, sunriseH, sunsetH) {
-  const W = 620, H = 190;
-  const PL = 38, PR = 12, PT = 24, PB = 28;
-  const GW = W - PL - PR, GH = H - PT - PB;
-
-  // Y軸スケール: 表示値 0〜200cm
-  const MAX_CM = 200;
-  function tx(t) { return PL + (t / 24) * GW; }
-  function ty(h_cm) {
-    const disp = Math.max(0, h_cm + shift);
-    return PT + GH - (disp / MAX_CM) * GH;
-  }
-
-  const linePath = heights.map((p, i) =>
-    (i === 0 ? 'M' : 'L') + ` ${tx(p.t).toFixed(1)} ${ty(p.h).toFixed(1)}`
-  ).join(' ');
-  const fillPath = linePath +
-    ` L ${tx(24).toFixed(1)} ${ty(0).toFixed(1)} L ${tx(0).toFixed(1)} ${ty(0).toFixed(1)} Z`;
-
-  const yGrid = [0.5, 1.0, 1.5].map(m => {
-    const cm = m * 100;
-    return `
-      <line x1="${PL}" y1="${ty(cm - shift).toFixed(1)}"
-            x2="${W-PR}" y2="${ty(cm - shift).toFixed(1)}"
-            stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3 3"/>
-      <text x="${PL-6}" y="${(ty(cm - shift)+4).toFixed(1)}" text-anchor="end"
-            fill="#b0bec5" font-size="9.5"
-            font-family="-apple-system,sans-serif">${m.toFixed(1)}</text>`;
-  }).join('');
-
-  const xLabels = [0,3,6,9,12,15,18,21,24].map(h =>
-    `<text x="${tx(h).toFixed(1)}" y="${PT+GH+18}" text-anchor="middle"
-           fill="#b0bec5" font-size="9.5"
-           font-family="-apple-system,sans-serif">${String(h).padStart(2,'0')}</text>`
-  ).join('');
-
-  const markers = extremes.map(e => {
-    const cx = tx(e.t).toFixed(1), cy = ty(e.h).toFixed(1);
-    const fill = e.type === 'high' ? '#2563eb' : '#64748b';
-    return `<circle cx="${cx}" cy="${cy}" r="4.5" fill="${fill}" stroke="white" stroke-width="2"/>`;
-  }).join('');
-
-  document.getElementById('tide-graph').innerHTML = `
-    <defs>
-      <linearGradient id="tideGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#3b82f6" stop-opacity="0.22"/>
-        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.02"/>
-      </linearGradient>
-    </defs>
-
-    <rect x="${tx(sunriseH).toFixed(1)}" y="${PT}"
-          width="${(tx(sunsetH)-tx(sunriseH)).toFixed(1)}" height="${GH}"
-          fill="#fefce8" rx="2"/>
-
-    ${yGrid}
-
-    <line x1="${PL}" y1="${PT+GH}" x2="${W-PR}" y2="${PT+GH}"
-          stroke="#e2e8f0" stroke-width="1"/>
-
-    <path d="${fillPath}" fill="url(#tideGrad)"/>
-    <path d="${linePath}" fill="none" stroke="#2563eb" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round"/>
-
-    <line x1="${tx(sunriseH).toFixed(1)}" y1="${PT}"
-          x2="${tx(sunriseH).toFixed(1)}" y2="${PT+GH}"
-          stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3"/>
-    <line x1="${tx(sunsetH).toFixed(1)}" y1="${PT}"
-          x2="${tx(sunsetH).toFixed(1)}" y2="${PT+GH}"
-          stroke="#fb923c" stroke-width="1.5" stroke-dasharray="4 3"/>
-
-    <text x="${tx(sunriseH).toFixed(1)}" y="${PT-8}" text-anchor="middle"
-          fill="#d97706" font-size="9"
-          font-family="-apple-system,sans-serif">日の出</text>
-    <text x="${tx(sunsetH).toFixed(1)}" y="${PT-8}" text-anchor="middle"
-          fill="#ea580c" font-size="9"
-          font-family="-apple-system,sans-serif">日の入り</text>
-
-    ${xLabels}
-    ${markers}
-  `;
+  tl = { heights, shift, extremes, sunriseH, sunsetH, nowH };
+  drawTimeline();
+  renderEvents(sunriseH, sunsetH, extremes, shift, nowH);
 }
 
 window.addEventListener('load', main);
+window.addEventListener('resize', () => { if (tl) drawTimeline(); });
 </script>
 </body>
 </html>
